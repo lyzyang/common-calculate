@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 日志存放名称 -->
+    <property name="log.filename" value="${log4j.filename:-dev}" />
+    <!-- 日志等级 -->
+    <property name="log.level" value="${log4j.level:-debug}" />
+    <!-- 日志存放路径 -->
+    <property name="log.path" value="logs" />
+    <!-- 日志输出格式 -->
+    <property name="log.pattern" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - [%method,%line] - %msg%n" />
+
+    <!-- 控制台输出 -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 系统日志输出 -->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}/opcclient.${log.filename}.log</file>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+
+        <!-- 循环政策：基于时间创建日志文件 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 日志文件名格式 -->
+            <fileNamePattern>${log.path}/opcclient.${log.filename}.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <!-- 每个日志文件的最大大小 -->
+            <maxFileSize>256MB</maxFileSize>
+            <!-- 最大保存数 -->
+            <maxHistory>5</maxHistory>
+        </rollingPolicy>
+
+    </appender>
+
+    <!-- 为特定包设置日志级别 -->
+    <logger name="com.calculate" additivity="false">
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+    </logger>
+
+    <!-- Apache POI 日志：调试 Excel 处理 -->
+    <logger name="org.apache.poi" additivity="false">
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+    </logger>
+
+    <!-- SLF4J 的日志实现（logback），避免被忽略 -->
+    <logger name="ch.qos.logback" additivity="false">
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+    </logger>
+
+    <!-- 根日志记录器级别为 info -->
+    <root level="${log.level}">
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+    </root>
+
+</configuration>
