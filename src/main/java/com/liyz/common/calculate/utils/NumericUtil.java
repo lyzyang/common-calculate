@@ -6,9 +6,6 @@ import org.slf4j.LoggerFactory;
 
 import java.text.DecimalFormat;
 
-/**
- * 数值工具类
- */
 public class NumericUtil
 {
     private static final Logger log = LoggerFactory.getLogger(NumericUtil.class);
@@ -43,7 +40,7 @@ public class NumericUtil
             }
             catch (Exception e)
             {
-                //log.error("parseDouble数值转换异常：" + dv);
+                log.error("parseDouble数值转换异常：" + dv);
             }
         }
         return d;

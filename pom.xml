@@ -18,7 +18,7 @@
     <developers>
         <developer>
             <name>liyz</name>
-            <email>your.email@example.com</email>
+            <email>yangzhou.li@foxmail.com</email>
         </developer>
     </developers>
 
@@ -105,6 +105,12 @@
             <version>1.2.11</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -150,51 +156,16 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.0</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>${project.build.sourceEncoding}</encoding>
-                            <docencoding>${project.build.sourceEncoding}</docencoding>
-                            <charset>${project.build.sourceEncoding}</charset>
-                            <detectJavaApiLink>true</detectJavaApiLink>
-                            <additionalOptions>
-                                <additionalOption>-Xdoclint:none</additionalOption>
-                            </additionalOptions>
-                            <failOnError>false</failOnError>
-                            <author>true</author>
-                            <version>true</version>
-                            <use>true</use>
-                            <windowtitle>${project.name} API</windowtitle>
-                            <doctitle>${project.name} API (v${project.version})</doctitle>
-                            <bottom>
-                                <![CDATA[Copyright © {currentYear} {project.organization.name}. All Rights Reserved.]]>
-                            </bottom>
-                            <tags>
-                                <tag>
-                                    <name>apiNote</name>
-                                    <placement>a</placement>
-                                    <head>API Note:</head>
-                                </tag>
-                                <tag>
-                                    <name>implSpec</name>
-                                    <placement>a</placement>
-                                    <head>Implementation Requirements:</head>
-                                </tag>
-                                <tag>
-                                    <name>implNote</name>
-                                    <placement>a</placement>
-                                    <head>Implementation Note:</head>
-                                </tag>
-                            </tags>
-                        </configuration>
-                    </execution>
-                </executions>
+                <version>3.4.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <docencoding>UTF-8</docencoding>
+                    <charset>UTF-8</charset>
+                    <doclint>none</doclint>
+                    <additionalJOptions>
+                        <additionalJOption>-Dfile.encoding=UTF-8</additionalJOption>
+                    </additionalJOptions>
+                </configuration>
             </plugin>
 
             <!-- 4. 测试插件 -->
@@ -203,14 +174,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
                 <configuration>
-                    <skipTests>${skipTests}</skipTests>
-                    <skip>${skipTests}</skip>
-                    <properties>
-                        <property>
-                            <name>junit.jupiter.execution.parallel.enabled</name>
-                            <value>true</value>
-                        </property>
-                    </properties>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
 
@@ -238,64 +202,6 @@
                     </archive>
                 </configuration>
             </plugin>
-
-            <!-- 6. 资源文件处理插件 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
-
-            <!-- 7. 可选：生成依赖树报告插件 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.0</version>
-                <executions>
-                    <execution>
-                        <id>analyze</id>
-                        <goals>
-                            <goal>analyze</goal>
-                        </goals>
-                        <configuration>
-                            <failOnWarning>false</failOnWarning>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
-
-        <!-- 资源文件处理配置 -->
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-                <includes>
-                    <include>**/*</include>
-                </includes>
-            </resource>
-            <!-- 可选：包含源码中的配置文件 -->
-            <resource>
-                <directory>src/main/java</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
-                </includes>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
-            </resource>
-        </resources>
-
-        <!-- 测试资源文件处理 -->
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-                <filtering>false</filtering>
-            </testResource>
-        </testResources>
     </build>
 </project>

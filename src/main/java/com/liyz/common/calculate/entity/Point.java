@@ -5,6 +5,9 @@ package com.liyz.common.calculate.entity;
  */
 public class Point
 {
+	/**
+	 * 测点的编码
+	 */
 	private String pointCode;
 
 	public String getPointCode() {

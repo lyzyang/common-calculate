@@ -28,20 +28,42 @@ public class CalculateService
 
     /**
      * 注册自定义的函数
+     *
      * @param func
+     */
+    /**
+     * 注册自定义函数。
+     * <p>
+     * 注册的函数可以在公式中通过名称调用。支持同步和异步函数。
+     * </p>
+     *
+     * @param func 函数配置对象，包含函数名、实现类和参数定义，不能为null
      */
     public void registerCustomFunction(AviatorFunction func)
     {
-        functionNameSet.add(func.getName());
-        AviatorEvaluator.addFunction(func);
+        if(func != null)
+        {
+            functionNameSet.add(func.getName());
+            AviatorEvaluator.addFunction(func);
+        }
     }
 
     /**
-     * 计算
-     * @param formulaMap
-     * @param pointValueMap
-     * @param debug
-     * @return
+     * 批量计算公式。
+     * <p>
+     * 根据提供的公式映射和数据点值，批量计算所有公式的结果。
+     * 支持调试模式，开启后会记录详细的中间计算过程。
+     * </p>
+     *
+     * @param formulaMap 公式映射，键为公式标识符，值为公式表达式。
+     *                   例如：{@code {"area": "length * width", "total": "price * quantity"}}
+     *                   不能为null，可以为空映射
+     * @param pointValueMap 数据点值映射，键为数据点名称，值为对应的数值。
+     *                      例如：{@code {"length": 10, "width": 5, "price": 100, "quantity": 2}}
+     *                      不能为null
+     * @param debug 是否启用调试模式。true：记录详细计算日志；false：只返回最终结果
+     * @return 计算结果映射，键为公式标识符，值为计算结果。
+     *         如果计算过程中发生错误，对应的值可能是null或NaN
      */
 	public Map<String, Double> calculate(Map<String,String> formulaMap, Map<String, Double> pointValueMap, Boolean debug)
 	{
@@ -85,15 +107,8 @@ public class CalculateService
         return result;
 	}
 
-    /**
-     * 计算表达式的值
-     * @param formulaMap			所有计算公式
-     * @param paramMap					测点或计算公式对应的值，作为参数参与运算
-     * @param formulaCodeHasExecuted	记录已执行的计算公式名称
-     * @param debug  是否打印日志
-     * @param formulaNameHasExecutedCount 已计算公式数量
-     * @return
-     */
+
+
     private Map<String, Double> doEvaludate(final Map<String,String> formulaMap,
                                             final Map<String, Double> paramMap,
                                             final Set<? super String> formulaCodeHasExecuted,
