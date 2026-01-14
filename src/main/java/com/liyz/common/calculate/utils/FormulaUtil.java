@@ -1,11 +1,8 @@
 package com.liyz.common.calculate.utils;
 
-import com.liyz.common.calculate.entity.Formula;
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class FormulaUtil
 {
@@ -31,27 +28,31 @@ public class FormulaUtil
      * 注意：b 和 d 没有依赖关系，它们的顺序可能不确定，但都会在依赖它们的表达式之前。
      * </p>
      *
-     * @param expressions 要排序的表达式列表。列表中的每个表达式应该能够被解析，以确定依赖关系。
+     * @param formulaMap 要排序的表达式列表。列表中的每个表达式应该能够被解析，以确定依赖关系。
      *                    该方法不会修改传入的列表，而是返回一个新的列表。
      * @return 按照依赖关系排序后的表达式列表。
      */
-    public static <T extends Formula> void sort(List<T> expressions)
+    public static LinkedHashMap<String, String> sort(Map<String, String> formulaMap)
     {
-        if (CollectionUtils.isEmpty(expressions))
+        if (MapUtils.isEmpty(formulaMap))
         {
-            return;
+            return new LinkedHashMap<>(formulaMap);
         }
-        Set<String> codeSet = expressions.stream().map(Formula::getFormulaCode).collect(Collectors.toSet());
-        Formula tmp;
-        int i = 0, j = expressions.size() - 1;
-        Formula head, tail;
+
+        Set<String> codeSet = formulaMap.keySet();
+        List<Map.Entry<String, String>> entryList = new ArrayList<>(formulaMap.entrySet());
+
+        Map.Entry<String, String> tmp;
+        int i = 0, j = entryList.size() - 1;
+        Map.Entry<String, String> head, tail;
+
         while (i < j)
         {
             boolean matchForHead = false;
             for (int k = i; k < j; k++)
             {
-                head = expressions.get(k);
-                if (match(head.getFormulaExpression(), codeSet))
+                head = entryList.get(k);
+                if (match(head.getValue(), codeSet))
                 {
                     matchForHead = true;
                     i = k;
@@ -62,8 +63,8 @@ public class FormulaUtil
             boolean matchForTail = false;
             for (int k = j; k > i; k--)
             {
-                tail = expressions.get(k);
-                if (match(tail.getFormulaExpression(), codeSet))
+                tail = entryList.get(k);
+                if (match(tail.getValue(), codeSet))
                 {
                     matchForTail = true;
                     j = k;
@@ -72,13 +73,22 @@ public class FormulaUtil
             }
             if (matchForHead && matchForTail)
             {
-                tmp = expressions.get(i);
-                expressions.set(i, expressions.get(j));
-                expressions.set(j, (T) tmp);
+                tmp = entryList.get(i);
+                entryList.set(i, entryList.get(j));
+                entryList.set(j, tmp);
             }
             i++;
             j--;
         }
+
+        // 创建新的LinkedHashMap保持顺序
+        LinkedHashMap<String, String> sortedMap = new LinkedHashMap<>();
+        for (Map.Entry<String, String> entry : entryList)
+        {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
     }
 
     private static boolean match(String expression, Set<String> codeSet)

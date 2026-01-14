@@ -5,8 +5,6 @@
 
 ## 功能特性
 - 支持Aviator表达式计算
-- 提供常用数学计算工具
-- 线程安全
 
 ## 快速开始
 
@@ -20,13 +18,21 @@
 ```
 
 ### 使用说明
-
-#### 表达式排序
-- 方法：FormulaUtil.sort
-- 参数: List<T extends Formula> expressions
-
 ```bash
 使用范例：
-List<FormulaTest> formulaList = FormulaMock.load();
-FormulaUtil.sort(formulaList);
+// 获取点列表与数据
+Map<String,Double> pointValueMap = new HashMap<>();
+// 获取公式
+Map<String,String> formulaMap = new HashMap<>();
+// 初始化自定义函数
+CustomFunction func = new CustomFunction()
+
+// 初始化计算服务
+CalculateService calculateService = new CalculateService();
+// 注册自定义函数
+calculateService.registerFunction(func);
+// 注册公式
+calculateService.registerFormula(formulaMap);
+// 计算出结果
+Map<String, Double> result = calculateService.calculate(pointValueMap,true);
 ```

@@ -1,5 +1,6 @@
 package com.liyz.common.calculate.service;
 
+import com.liyz.common.calculate.utils.FormulaUtil;
 import com.liyz.common.calculate.utils.NumericUtil;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.runtime.type.AviatorFunction;
@@ -20,7 +21,9 @@ public class CalculateService
 
     private String splitPatten="\\+|\\-|\\*|/|\\s+|\\t|\\r|\\n|=|\\(|\\)|,|&&|\\|\\||>|>=|<|<=|<\\s+=|>\\s+=|==|:|\\?";
 
-    private Set<String> functionNameSet = new HashSet<>(32);
+    private Set<String> functionNameSet = new HashSet<>();
+
+    private Map<String, String> formulaLinkMap = new LinkedHashMap<>();
 
     public CalculateService()
     {
@@ -39,25 +42,38 @@ public class CalculateService
      *
      * @param func 函数配置对象，包含函数名、实现类和参数定义，不能为null
      */
-    public void registerCustomFunction(AviatorFunction func)
+    public void registerFunction(AviatorFunction func)
     {
         if(func != null)
         {
             functionNameSet.add(func.getName());
             AviatorEvaluator.addFunction(func);
+            log.info("注册自定义函数<" + func.getName() + ">成功");
         }
+    }
+
+    /**
+     * 注册公式映射。
+     * <p>
+     * 公式会根据依赖关系自动排序，确保计算顺序正确。
+     * 注册成功的公式可用于后续的批量计算。
+     * </p>
+     *
+     * @param formulaMap 公式映射表，键为公式ID，值为公式表达式
+     */
+    public void registerFormula(Map<String, String> formulaMap)
+    {
+        formulaLinkMap.putAll(FormulaUtil.sort(formulaMap));
+        log.info("注册" + formulaMap.size() + "公式条成功");
     }
 
     /**
      * 批量计算公式。
      * <p>
-     * 根据提供的公式映射和数据点值，批量计算所有公式的结果。
+     * 根据注册的公式映射和提供数据点值，批量计算所有公式的结果。
      * 支持调试模式，开启后会记录详细的中间计算过程。
      * </p>
      *
-     * @param formulaMap 公式映射，键为公式标识符，值为公式表达式。
-     *                   例如：{@code {"area": "length * width", "total": "price * quantity"}}
-     *                   不能为null，可以为空映射
      * @param pointValueMap 数据点值映射，键为数据点名称，值为对应的数值。
      *                      例如：{@code {"length": 10, "width": 5, "price": 100, "quantity": 2}}
      *                      不能为null
@@ -65,9 +81,9 @@ public class CalculateService
      * @return 计算结果映射，键为公式标识符，值为计算结果。
      *         如果计算过程中发生错误，对应的值可能是null或NaN
      */
-	public Map<String, Double> calculate(Map<String,String> formulaMap, Map<String, Double> pointValueMap, Boolean debug)
+	public Map<String, Double> calculate(Map<String, Double> pointValueMap, Boolean debug)
 	{
-		if(formulaMap.size()==0 || pointValueMap.size()==0)
+		if(formulaLinkMap.size()==0 || pointValueMap.size()==0)
 		{
 			return Collections.emptyMap();
 		}
@@ -86,7 +102,7 @@ public class CalculateService
         do
         {
             formulaNameHasExecutedCount = formulaCodeHasExecuted.size();
-            Map<String, Double> result1 = doEvaludate(formulaMap, paramMap, formulaCodeHasExecuted, debug, formulaNameHasExecutedCount);
+            Map<String, Double> result1 = doEvaludate(paramMap, formulaCodeHasExecuted, debug, formulaNameHasExecutedCount);
             if (result1.size() != 0)
             {
                 result.putAll(result1);
@@ -99,7 +115,7 @@ public class CalculateService
         if(debug)
         {
             log.info("解析表达式总数: {}", formulaCodeHasExecuted.size());
-            List<String> notExecutedList = formulaMap.keySet().stream().collect(Collectors.toList());
+            List<String> notExecutedList = formulaLinkMap.keySet().stream().collect(Collectors.toList());
             notExecutedList.removeAll(formulaCodeHasExecuted);
             log.info("没有解析的表达式: {}", notExecutedList.stream().collect(Collectors.joining(" | ")));
         }
@@ -109,8 +125,7 @@ public class CalculateService
 
 
 
-    private Map<String, Double> doEvaludate(final Map<String,String> formulaMap,
-                                            final Map<String, Double> paramMap,
+    private Map<String, Double> doEvaludate(final Map<String, Double> paramMap,
                                             final Set<? super String> formulaCodeHasExecuted,
                                             boolean debug,
                                             int formulaNameHasExecutedCount)
@@ -119,7 +134,7 @@ public class CalculateService
         MultiValuedMap<String, String> formulaOfLackParamMap = new ArrayListValuedHashMap<>();
         // 保存计算公式的运算结果
         Map<String, Double> expResult=new LinkedHashMap<>();
-        formulaMap.forEach((expName,expression)->
+        formulaLinkMap.forEach((expName,expression)->
         {
             if(formulaCodeHasExecuted.contains(expName))
             {

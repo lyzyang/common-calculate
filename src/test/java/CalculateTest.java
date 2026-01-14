@@ -1,13 +1,9 @@
 
-import entity.FormulaTest;
-import entity.PointTest;
 import function.*;
-import com.liyz.common.calculate.utils.FormulaUtil;
 import mock.FormulaMock;
 import mock.PointDataMock;
 import mock.PointMock;
 import com.liyz.common.calculate.service.CalculateService;
-import com.liyz.common.calculate.utils.NumericUtil;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,29 +18,11 @@ public class CalculateTest
     @Test
     public void test() throws IOException
     {
-        // 获取点列表
-        List<PointTest> pointList = PointMock.load();
-
-        // 获取点数据
-        Map<String, Double> pointValueMap = new HashMap<>();
-        for (PointTest point : pointList)
-        {
-            pointValueMap.put(point.getPointCode(), NumericUtil.keep2Digits(point.getPointValue()));
-            //log.info(point.getPointCode()+"-------"+point.getPointValue());
-        }
+        // 获取点列表与数据
+        Map<String,Double> pointValueMap = PointMock.load();
 
         // 获取公式
-        List<FormulaTest> formulaList = FormulaMock.load();
-
-        // 对表达式排序，表达式没有依赖其他表达式值的排在前面
-        FormulaUtil.sort(formulaList);
-
-        // 组合公式列表
-        Map<String,String> formulaMap = new TreeMap<>();
-        for(FormulaTest formulaTest : formulaList)
-        {
-            formulaMap.put(formulaTest.getFormulaCode(),formulaTest.getFormulaExpression());
-        }
+        Map<String,String> formulaMap = FormulaMock.load();
 
         // 获取公式历史数据(用于累计)
         Map<String, Double> calculateHistoryData = PointDataMock.getHistoryDatas();
@@ -54,37 +32,31 @@ public class CalculateTest
         CalculateService calculateService = new CalculateService();
 
         // 注册自定义函数
-        FDASPTFunction func1 = new FDASPTFunction();
-        FDAHPTFunction func2 = new FDAHPTFunction();
-        FSTSPFunction func3 = new FSTSPFunction();
-        WP2SLFunction func4 = new WP2SLFunction();
-        FDWHPTFunction func5 = new FDWHPTFunction();
-        FDPOWFunction func6 = new FDPOWFunction();
-        FDAHPSFunction func7 = new FDAHPSFunction();
-        NOWFunction func8 = new NOWFunction();
-        WEEKFunction func9 = new WEEKFunction();
-        DAYFunction func10 = new DAYFunction();
-        MONTHFunction func11 = new MONTHFunction();
-        PERIODTIMEFunction func12 = new PERIODTIMEFunction();
-        WP2HLFunction func13 = new WP2HLFunction();
-        WT2HLFunction func14 = new WT2HLFunction();
-        calculateService.registerCustomFunction(func1);
-        calculateService.registerCustomFunction(func2);
-        calculateService.registerCustomFunction(func3);
-        calculateService.registerCustomFunction(func4);
-        calculateService.registerCustomFunction(func5);
-        calculateService.registerCustomFunction(func6);
-        calculateService.registerCustomFunction(func7);
-        calculateService.registerCustomFunction(func8);
-        calculateService.registerCustomFunction(func9);
-        calculateService.registerCustomFunction(func10);
-        calculateService.registerCustomFunction(func11);
-        calculateService.registerCustomFunction(func12);
-        calculateService.registerCustomFunction(func13);
-        calculateService.registerCustomFunction(func14);
+        calculateService.registerFunction(new DAYFunction());
+        calculateService.registerFunction(new FDAHPSFunction());
+        calculateService.registerFunction(new FDAHPTFunction());
+        calculateService.registerFunction(new FDASPTFunction());
+        calculateService.registerFunction(new FDASPTFunction());
+        calculateService.registerFunction(new FDPOWFunction());
+        calculateService.registerFunction(new FDWHPTFunction());
+        calculateService.registerFunction(new FSTSPFunction());
+        calculateService.registerFunction(new MONTHFunction());
+        calculateService.registerFunction(new NOWFunction());
+        calculateService.registerFunction(new PERIODTIMEFunction());
+        calculateService.registerFunction(new WEEKFunction());
+        calculateService.registerFunction(new WP2HLFunction());
+        calculateService.registerFunction(new WP2SLFunction());
+        calculateService.registerFunction(new WT2HLFunction());
+
+        // 注册公式
+        calculateService.registerFormula(formulaMap);
 
         // 计算出结果
-        Map<String, Double> result = calculateService.calculate(formulaMap,pointValueMap,true);
-        System.out.println(result);
+        Map<String, Double> result1 = calculateService.calculate(pointValueMap,true);
+        System.out.println(result1);
+
+        Map<String, Double> result2 = calculateService.calculate(pointValueMap,false);
+        System.out.println(result2);
+
     }
 }
