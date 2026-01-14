@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 public class CalculateService
 {
-
     private static final Logger log = LoggerFactory.getLogger(CalculateService.class);
 
     private String splitPatten="\\+|\\-|\\*|/|\\s+|\\t|\\r|\\n|=|\\(|\\)|,|&&|\\|\\||>|>=|<|<=|<\\s+=|>\\s+=|==|:|\\?";
@@ -29,11 +28,6 @@ public class CalculateService
     {
     }
 
-    /**
-     * 注册自定义的函数
-     *
-     * @param func
-     */
     /**
      * 注册自定义函数。
      * <p>
@@ -122,8 +116,6 @@ public class CalculateService
 
         return result;
 	}
-
-
 
     private Map<String, Double> doEvaludate(final Map<String, Double> paramMap,
                                             final Set<? super String> formulaCodeHasExecuted,
