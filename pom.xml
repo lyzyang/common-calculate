@@ -7,7 +7,7 @@
     <!-- 优化：使用更规范的groupId和artifactId命名 -->
     <groupId>com.liyz.common</groupId>
     <artifactId>liyz-common-calculate</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 
     <!-- 优化：添加项目信息，便于生成Javadoc -->
     <name>Common Calculate Library</name>
@@ -41,6 +41,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.javadoc.skip>false</maven.javadoc.skip>
+        <java.version>1.8</java.version>
     </properties>
 
     <dependencies>
@@ -151,14 +153,35 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                            <docencoding>UTF-8</docencoding>
+                            <charset>UTF-8</charset>
+                            <doclint>none</doclint>
+                            <failOnError>false</failOnError>
+                            <show>private</show>
+                            <additionalJOptions>
+                                <additionalJOption>-Xdoclint:none</additionalJOption>
+                            </additionalJOptions>
+                        </configuration>
+                    </execution>
+                </executions>
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <docencoding>UTF-8</docencoding>
                     <charset>UTF-8</charset>
                     <doclint>none</doclint>
-                    <additionalJOptions>
-                        <additionalJOption>-Dfile.encoding=UTF-8</additionalJOption>
-                    </additionalJOptions>
+                    <failOnError>false</failOnError>
+                    <show>private</show>
+                    <source>8</source>
+                    <quiet>true</quiet>
                 </configuration>
             </plugin>
 
@@ -169,31 +192,6 @@
                 <version>3.1.2</version>
                 <configuration>
                     <skip>true</skip>
-                </configuration>
-            </plugin>
-
-            <!-- 5. JAR插件增强配置 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                        </manifest>
-                        <manifestEntries>
-                            <Implementation-Title>${project.name}</Implementation-Title>
-                            <Implementation-Version>${project.version}</Implementation-Version>
-                            <Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
-                            <Built-By>${user.name}</Built-By>
-                            <Build-Jdk>${java.version}</Build-Jdk>
-                            <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
-                            <!-- 添加依赖信息 -->
-                            <Class-Path>.</Class-Path>
-                        </manifestEntries>
-                    </archive>
                 </configuration>
             </plugin>
         </plugins>
