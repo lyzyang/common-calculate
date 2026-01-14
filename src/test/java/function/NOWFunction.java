@@ -21,7 +21,5 @@ public class NOWFunction extends AbstractFunction
     public String getName() {
         return "NOW";
     }
-
-
 }
 

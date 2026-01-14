@@ -64,7 +64,7 @@ public class CalculateService
     public void registerFormula(Map<String, String> formulaMap)
     {
         formulaLinkMap.putAll(FormulaUtil.sort(formulaMap));
-        log.info("注册" + formulaMap.size() + "公式条成功");
+        log.info("注册公式<" + formulaMap.size() + ">条成功");
     }
 
     /**
