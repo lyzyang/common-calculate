@@ -23,10 +23,16 @@ public class CalculateTest
         pointValueMap.put("D_test2", 10d);
         pointValueMap.put("D_test3", 20d);
 
+        // 公式累算需要历史数据
+        pointValueMap.put("M_test4", 20d);
+
         // 获取公式
         Map<String,String> formulaMap = new HashMap<>();
         formulaMap.put("M_test1","a=D_test1+D_test2");
         formulaMap.put("M_test2","a=TEST(D_test3)");
+        formulaMap.put("M_test3","a=M_test1+M_test2");
+        formulaMap.put("M_test4","a=M_test4+10");
+        formulaMap.put("M_test5","a=(M_test1>20) ? 0 : M_test2/M_test3;b=a*1000");
 
         // 初始化计算服务
         CalculateService calculateService = new CalculateService();
@@ -35,8 +41,13 @@ public class CalculateTest
         // 注册公式
         calculateService.registerFormula(formulaMap);
         // 计算出结果
-        Map<String, Double> result = calculateService.calculate(pointValueMap,true);
-        System.out.println(result);
+        Map<String, Double> result1 = calculateService.calculate(pointValueMap,true);
+        System.out.println(result1);
+
+        // 将计算结果加入，再次参与计算
+        pointValueMap.putAll(result1);
+        Map<String, Double> result2 = calculateService.calculate(pointValueMap,false);
+        System.out.println(result2);
     }
 
     @Test
