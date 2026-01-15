@@ -8,7 +8,7 @@
 
 ## 快速开始
 
-### Maven依赖
+- Maven依赖
 ```xml
 <repositories>
     <repository>
@@ -20,11 +20,11 @@
 <dependency>
     <groupId>com.github.lyzyang</groupId>
     <artifactId>common-calculate</artifactId>
-    <version>v1.0.1</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
-### 使用范例
+- 使用范例
 ```bash
 public class CalculateTest
 {
