@@ -20,7 +20,7 @@
 <dependency>
     <groupId>com.github.lyzyang</groupId>
     <artifactId>common-calculate</artifactId>
-    <version>v1.0.0</version>
+    <version>v1.0.1</version>
 </dependency>
 ```
 
